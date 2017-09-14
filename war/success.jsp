@@ -20,29 +20,36 @@
 	background: #000;
 }
 </style>
+<div id="name" style="margin-left: 1243px; margin-top: 14px;">
+<script type="text/javascript">
+
+<%String x = (String) (session.getAttribute("name"));%>
+var name = "<%=x%>";
+
+console.log(name);
+document.getElementById("name").innerHTML = name;
+</script>
+</div>
 
 </head>
-<body>
+<body onfocusout="hidetexbox()">
 
 	<div class="col-md-6">
 		<h2>TIME</h2>
-		<div id="scrollBar" style="overflow-y: scroll; height: 369px; margin-right: 244px;">
+		<div id="scrollBar" style="overflow-y: auto; height: 498px; margin-right: 217px;">
+		<h4><div id="emptyMessage" style="display:block; text-align:center"></div></h4>
 		<ul id="givenTime" class="list-group"
-			style="width:154px; padding-left: 6px; font-size: 22px; border-left: 48;"
+			style="width:355px;
+    text-align: center; padding-left: 6px; font-size: 22px; border-left: 48;"
 			onclick="startTimer(event)">
 		</ul>
 		</div>
 
 	</div>
-
-
-
-	<div id="bottom" style="position: fixed; bottom: 0px;">
+ <div id="bottom" style="position: fixed; bottom: 0px;">
 		<div id="addingTime" style="display: none;">
-           <form id="reset">
-			<input type="text" id="giveTime" name="time" onclick="this.select()"
-				onKeyDown="timecheck()"
-				style="margin-bottom: -5px; margin-left: 17px;" autofocus></form>
+			<input type="time" step="2" id="giveTime" name="time"onKeyDown="timecheck()"
+				style="width: 416px;margin-left: 4px;text-align: center;" autofocus="autofocus">
 		</div>
 		<div onclick="openBox()" id="plus">
 
@@ -57,7 +64,11 @@
 			</div>
 		</div>
 	
-	<div class="col-md-5">
+	<div class="col-md-6">
+	<div id="errorDisplay">
+	<p id="delete" style ="display:none">Delted Successfully</p>
+    <p id ="timeExists" style ="display:none">Time Already Exists</p>
+	</div>
 		<div class="vertical_line" style="margin-left: -237px;"></div>
 	</div>
 	<div class="col-md-6">
@@ -70,7 +81,7 @@
 		</ul>
 		</nav>
 		<div id="startTime"></div>
-		<div id="display" style="margin-top: -2926px;font-size: 90px;margin-left: 607px;">12:26:2</div>
+		<div id="display" style="margin-top: -2926px;font-size: 90px;margin-left: 607px;">00:00:00</div>
 		<div id="stop" style="display: none;" onclick="stop()">
 			<span class="glyphicon glyphicon-stop" style="color: red;font-size =10px;font-size: 25px;margin-right: -2px;margin-left: 767px;">stop</span>
 		</div>
@@ -86,68 +97,31 @@
 						var arr = [];
 						var a = JSON.parse(list);
 						var arr = a.listOfStrings;
+						if(arr.length>0){
 						arr.forEach(function(time) {
 							var ul = document.getElementById("givenTime");
 							var li = document.createElement("li");
 							var lii = document.createElement("button");
 							lii.setAttribute("id", time);
-							lii.setAttribute("style","margin-right: -63px; float: right;");
+							lii.className="glyphicon glyphicon-trash";
+							lii.setAttribute("style","margin-right: -50px; float: right;margin-top: -73px;");
 							li.setAttribute("class", "list-group-item");
 							li.setAttribute("class", "well");
 							li.appendChild(document.createTextNode(time));
 							ul.appendChild(li);
 							ul.appendChild(lii);
 
-						})
-					}
-				}); 
-            	  
-              
-				  $('#giveTime').keydown(function(e) {
-					if (e.which == 13) {
-						alert('You pressed enter!');
-
-						//alert("button pressed");
-						var giveTime = $('#giveTime').val();
-						var data = {
-							"giveTime" : giveTime
-						};
-						var jsonobject = JSON.stringify(data);
-						$.ajax({
-							type : 'POST',
-							dataType : "json",
-						    contentType: "application/json; charset=utf-8",
-							data : jsonobject,
-							url : 'Timer',
-							
-							success : function(result) {
-								  //var json = JSON.parse(result);
-								  console.log(result);
-								  if(result.key=="success"){
-									
-									alert("data inserted");
-									$("#result1").html(result);
-									$("#reset")[0].reset();
-									
-								}
-								else{
-									alert("time already exists");
-									var targetToDelete = document.getElementById(giveTime).previousSibling;
-									document.getElementById(giveTime).parentNode.removeChild(targetToDelete);
-									giveTime.style.display="none";
-									
-								}
-							},
-							error : function(result) {
-								alert("error");
-							}
-
 						});
+					}else{
+						document.getElementById("emptyMessage").innerHTML="No Timers are available";
+
 					}
-				});
- 
+						
+					}
+				}) ;
+	
 			}); 
-			
+ 		
  	</script>
 	
  	

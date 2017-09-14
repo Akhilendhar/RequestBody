@@ -47,6 +47,7 @@ public class ControllerFile {
 		String password = (String) map1.get("password");
 		HttpSession session = req.getSession();
 		session.setAttribute("name", firstname);
+		//session.setAttribute("email", email);
 		System.out.println(firstname);
 		Personpojo pojo = new Personpojo();
 		pojo.setFirstname(firstname);
@@ -100,6 +101,7 @@ public class ControllerFile {
 			} else {
 				session.setAttribute("id", results.get(0));
 				session.setAttribute("name", results.get(0).getFirstname());
+				session.setAttribute("email", results.get(0).getEmail());
 				map.put("key1", "fail");
 				// out.println("your are logged in");
 			}
@@ -126,7 +128,7 @@ public class ControllerFile {
 		Map<String, String> map = new HashMap<>();
 		Map<String, Object> map1 = objectmapper.readValue(timedata, new TypeReference<Map<String, Object>>() {
 		});
-		String time = (String) map1.get("giveTime");
+		String time = (String) map1.get("time");
 		HttpSession session = req.getSession();
 		Personpojo registerobj = (Personpojo) session.getAttribute("id");
 		Long ids = registerobj.getIds();
@@ -151,7 +153,13 @@ public class ControllerFile {
 				if (results1.isEmpty() || results1.equals(null)) {
 					pmf.makePersistent(date);
 					map.put("key", "success");
-				} else {
+				} 
+				else if(results1.get(0).getIsDelete().equals(true))
+				{
+				results1.get(0).setIsDelete(false);
+				pmf.makePersistent(results1.get(0));
+				map.put("key", "success");
+				}else {
 					map.put("key1", "fail");
 					System.out.println("time already exists");
 					// return "null";
@@ -176,8 +184,7 @@ public class ControllerFile {
 		// String email = request.getParameter("email");
 		HttpSession session = request.getSession();
 		HashMap<String, Object> responseMap = new HashMap<>();
-
-		Personpojo registerobj = (Personpojo) session.getAttribute("id");
+        Personpojo registerobj = (Personpojo) session.getAttribute("id");
 		Long Id = registerobj.getIds();
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		List<TimerPojo> results1 = null;
@@ -262,5 +269,27 @@ public class ControllerFile {
 		}
 		return objectmapper.writeValueAsString(map);
 	}
-
+	@ResponseBody
+	@RequestMapping(value="/signout", method=RequestMethod.POST)
+	public String delete(HttpServletRequest req, HttpServletResponse res) throws JsonParseException, JsonMappingException, IOException {
+		ObjectMapper objectmapper = new ObjectMapper();
+		System.out.println("in delete method");
+		Map<String, String> map = new HashMap<>();
+		HttpSession session = req.getSession();
+		Personpojo obj = (Personpojo) session.getAttribute("id");
+		String email = obj.getEmail();
+		System.out.println(email);
+		session.invalidate();
+		map.put("key", "success");
+		return objectmapper.writeValueAsString(map);
+		
+		
+	}
+	@RequestMapping("/Aftersigout")
+   public ModelAndView signout() {
+	return new ModelAndView("firstpage");
+	   
+	   
+	   
+   }
 }

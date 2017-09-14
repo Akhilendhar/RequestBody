@@ -13,12 +13,12 @@ public class TimerPojo implements Serializable {
 	private String time;
 	@Persistent
 	private String email;
-	private boolean isDelete=false;
+	private Boolean isDelete=false;
 	
-	public boolean getIsDelete() {
+	public Boolean getIsDelete() {
 		return isDelete;
 	}
-	public void setIsDelete(boolean isDelete) {
+	public void setIsDelete(Boolean isDelete) {
 		this.isDelete = isDelete;
 	}
 	public String getEmail(){
