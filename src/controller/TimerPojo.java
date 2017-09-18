@@ -10,7 +10,7 @@ import javax.jdo.annotations.Persistent;
 @PersistenceCapable
 public class TimerPojo implements Serializable {
 	
-	private String time;
+	private Long time;
 	@Persistent
 	private String email;
 	private Boolean isDelete=false;
@@ -38,11 +38,11 @@ public Set<Long> getIdvalues() {
 	public void setIdvalues(Set<Long> idvalues) {
 		this.Idvalues = idvalues;
 	}
-	public String getTime() {
+	public Long getTime() {
 		return time;
 	}
 
-	public void setTime(String time) {
+	public void setTime(Long time) {
 		this.time = time;
 	}
 

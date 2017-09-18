@@ -48,13 +48,20 @@ document.getElementById("name").innerHTML = name;
 	</div>
  <div id="bottom" style="position: fixed; bottom: 0px;">
 		<div id="addingTime" style="display: none;">
-			<input type="time" step="2" id="giveTime" name="time"onKeyDown="timecheck()"
-				style="width: 416px;margin-left: 4px;text-align: center;" autofocus="autofocus">
+		 <p id ="timeExists" style ="display:none;text-align:center">Time Already Exists</p>
+			<input type="text" step="2" id="giveTime" name="time"onKeyDown="timecheck()"
+				style="width: 416px;margin-left: 4px;text-align: center;" autofocus>
+				
 		</div>
+		 <p id ="timerror" style ="display:none">Enter the correct format</p>
+		 <div id="errorDisplay">
+	<p id="delete" style ="display:none">Delted Successfully</p>
+	</div>
+		 
 		<div onclick="openBox()" id="plus">
 
 			<div id="hor">
-				<hr width="446px">
+			<h3 style="background-color:black; padding:2% 460px 0% 0; ">
 			</div>
 			<center>
 				<h1>
@@ -65,11 +72,7 @@ document.getElementById("name").innerHTML = name;
 		</div>
 	
 	<div class="col-md-6">
-	<div id="errorDisplay">
-	<p id="delete" style ="display:none">Delted Successfully</p>
-    <p id ="timeExists" style ="display:none">Time Already Exists</p>
-	</div>
-		<div class="vertical_line" style="margin-left: -237px;"></div>
+   <div class="vertical_line" style="margin-left: -237px;"></div>
 	</div>
 	<div class="col-md-6">
 		<nav class="navbar navbar-fixed-top">
@@ -121,11 +124,21 @@ document.getElementById("name").innerHTML = name;
 				}) ;
 	
 			}); 
+			
  		
  	</script>
+ 	</body>
 	
- 	
- 	
- 
-</body>
+ 	<%
+response.setHeader("Cache-Control", "no-cache");
+response.setHeader("Cache-Control", "no-store");
+response.setDateHeader("Expires", 0);
+response.setHeader("Pragma", "no-cache");
+String userName = (String) session.getAttribute("email");
+if (null == userName) {
+  RequestDispatcher rd = request.getRequestDispatcher("firstpage.jsp");
+  rd.forward(request, response);
+}
+ %>
+
 </html>

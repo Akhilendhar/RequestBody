@@ -23,6 +23,7 @@ function postTime() {
 	//alert("posting time");
 	document.getElementById("addingTime").style.display = "none";
 	document.getElementById("emptyMessage").style.display="none";
+	document.getElementById("timerror").style.display="none";
 	var time = document.getElementById("giveTime").value;
 	console.log(time);
 	var xhr = new XMLHttpRequest();
@@ -50,6 +51,7 @@ function postTime() {
 	        }
 	        else{
 	        	//alert("fail");
+	        	document.getElementById("addingTime").style.display = "block";
 	        	document.getElementById("timeExists").style.display="block";
 	        	setTimeout(function()
 	        	{
@@ -80,7 +82,9 @@ function checkTimeFormat(event) {
 		postTime();
 		console.log(event);
 	} else {
-		alert("please enter HH:MM:SS format only ");
+		document.getElementById("timerror").style.display="block";
+		
+		//alert("please enter HH:MM:SS format only ");
 	}
 }
 function startTimer(event) {
@@ -223,7 +227,6 @@ xhr.onreadystatechange = function () {
         }
         else{
         //alert("fail");
-        document.getElementById("errormsg").innerHTML="user is not present";
         //alert("move to other page");
         window.location.href="/aftersignup";
         }
@@ -241,8 +244,6 @@ function hidetexbox(){
 	
 }
 	function signOut(){
-		//var password = document.getElementById("password").value;
-		// console.log(name);
 		var xhr = new XMLHttpRequest();
 		var url = "/signout";
 		xhr.open("POST", url, true);
@@ -251,7 +252,6 @@ function hidetexbox(){
 		if (xhr.readyState == 4 && xhr.status == 200) {
 			var json = JSON.parse(xhr.responseText);
 			console.log("responce");
-			//console.log(result);
 			if(json.key=="success"){
 				console.log("in the loop");
 				window.location.href="/Aftersigout";

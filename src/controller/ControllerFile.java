@@ -3,8 +3,10 @@ package controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
@@ -47,7 +49,7 @@ public class ControllerFile {
 		String password = (String) map1.get("password");
 		HttpSession session = req.getSession();
 		session.setAttribute("name", firstname);
-		//session.setAttribute("email", email);
+		session.setAttribute("email", email);
 		System.out.println(firstname);
 		Personpojo pojo = new Personpojo();
 		pojo.setFirstname(firstname);
@@ -97,7 +99,6 @@ public class ControllerFile {
 			List<Personpojo> results = (List<Personpojo>) q.execute(email, password);
 			if (results.isEmpty()) {
 				map.put("key", "success");
-				// out.println("please enter the valid email and password");
 			} else {
 				session.setAttribute("id", results.get(0));
 				session.setAttribute("name", results.get(0).getFirstname());
@@ -129,40 +130,48 @@ public class ControllerFile {
 		Map<String, Object> map1 = objectmapper.readValue(timedata, new TypeReference<Map<String, Object>>() {
 		});
 		String time = (String) map1.get("time");
+		String[] arr=time.split(":");
+		String HH = arr[0];
+		String MM = arr[1];
+		String SS= arr[2];
+		Integer hours=Integer.parseInt(HH.trim());
+		Integer minutes=Integer.parseInt(MM.trim());
+		Integer sec=Integer.parseInt(SS.trim());
+		System.out.println("hours"+HH);
+		long hourssec= hours*60*60;
+		long minutesec = minutes*60;
+		long totalsec = hourssec+minutesec+sec;
+		Long millisec = totalsec*1000;
+		System.out.println(millisec);
 		HttpSession session = req.getSession();
 		Personpojo registerobj = (Personpojo) session.getAttribute("id");
 		Long ids = registerobj.getIds();
-		System.out.println(ids);
+		System.out.println(ids.toString());
 		String email = registerobj.getEmail();
 		TimerPojo date = new TimerPojo();
-		date.setTime(time);
+		date.setTime(millisec);
 		date.getIdvalues().add(ids);
 		date.setEmail(email);
 		PersistenceManager pmf = PMF.get().getPersistenceManager();
-		// pmf.makePersistent(date);
-		List<TimerPojo> results1 = null;
-		List<String> listStrings = new ArrayList<String>();
+		
 		try {
 
 			Query query = pmf.newQuery(TimerPojo.class, ("time == Time && Idvalues == id1 "));
-			query.declareParameters("String Time,String id1");
+			query.declareParameters("Long Time,String id1");
 
 			try {
 
-				results1 = (List<TimerPojo>) query.execute(time, ids);
+				List<TimerPojo> results1 = (List<TimerPojo>) query.execute(millisec, ids);
 				if (results1.isEmpty() || results1.equals(null)) {
 					pmf.makePersistent(date);
 					map.put("key", "success");
-				} 
-				else if(results1.get(0).getIsDelete().equals(true))
-				{
-				results1.get(0).setIsDelete(false);
-				pmf.makePersistent(results1.get(0));
-				map.put("key", "success");
-				}else {
+				} else if (results1.get(0).getIsDelete().equals(true)) {
+					results1.get(0).setIsDelete(false);
+					pmf.makePersistent(results1.get(0));
+					map.put("key", "success");
+				} else {
 					map.put("key1", "fail");
 					System.out.println("time already exists");
-					// return "null";
 
 				}
 			} catch (Exception e) {
@@ -184,7 +193,7 @@ public class ControllerFile {
 		// String email = request.getParameter("email");
 		HttpSession session = request.getSession();
 		HashMap<String, Object> responseMap = new HashMap<>();
-        Personpojo registerobj = (Personpojo) session.getAttribute("id");
+		Personpojo registerobj = (Personpojo) session.getAttribute("id");
 		Long Id = registerobj.getIds();
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		List<TimerPojo> results1 = null;
@@ -202,9 +211,38 @@ public class ControllerFile {
 				if (results1.isEmpty() || results1.equals(null)) {
 				} else {
 					for (TimerPojo d : results1) {
+						System.out.println(d.getTime());
+						long totalseconds = (d.getTime())/1000;
+						System.out.println(totalseconds);
+					    int hours = (int) (totalseconds/3600);
+					    long secondsleft = totalseconds-hours*3600;
+					    int minutes = (int) (secondsleft/60);
+					    long seconds = secondsleft-minutes*60;
+					    System.out.println(hours);
+					    System.out.println(minutes);
+					    System.out.println(seconds);
+					    String formattedTime = "";
+					    if (hours < 10)
+					        formattedTime += "0";
+					    formattedTime += hours + ":";
+
+					    if (minutes < 10)
+					        formattedTime += "0";
+					    formattedTime += minutes + ":";
+
+					    if (seconds < 10)
+					        formattedTime += "0";
+					    formattedTime += seconds ;
+
+                          System.out.println(formattedTime);		
+					
+					    
+				
 						// out.println(d.getaddTime());
 						// response.getWriter().write("dfgh");
-						listStrings.add(d.getTime());
+					  // String timer = d.getTime().toString();
+						listStrings.add(formattedTime);
+						
 
 					}
 					// System.out.println(((TimerJDO) results1).getaddTime());
@@ -237,18 +275,29 @@ public class ControllerFile {
 		});
 		System.out.println(delete);
 		String deleteTime = (String) maper.get("deltime");
-		HttpSession session = request.getSession();
+		String[] arr=deleteTime.split(":");
+		String HH = arr[0];
+		String MM = arr[1];
+		String SS= arr[2];
+		Integer hours=Integer.parseInt(HH.trim());
+		Integer minutes=Integer.parseInt(MM.trim());
+		Integer sec=Integer.parseInt(SS.trim());
+		long hourssec= hours*60*60;
+		long minutesec = minutes*60;
+		long totalsec = hourssec+minutesec+sec;
+		Long millisec = totalsec*1000;
+	    HttpSession session = request.getSession();
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		TimerPojo dataobj = new TimerPojo();
 		List<TimerPojo> results11 = null;
 		try {
 
 			Query query = pm.newQuery(TimerPojo.class, ("time == time1"));
-			query.declareParameters("String time1");
+			query.declareParameters("Long time1");
 
 			try {
 
-				results11 = (List<TimerPojo>) query.execute(deleteTime);
+				results11 = (List<TimerPojo>) query.execute(millisec);
 
 				if (results11.isEmpty() || results11.equals(null)) {
 					map.put("key1", "fail");
@@ -269,27 +318,31 @@ public class ControllerFile {
 		}
 		return objectmapper.writeValueAsString(map);
 	}
+
 	@ResponseBody
-	@RequestMapping(value="/signout", method=RequestMethod.POST)
-	public String delete(HttpServletRequest req, HttpServletResponse res) throws JsonParseException, JsonMappingException, IOException {
+	@RequestMapping(value = "/signout", method = RequestMethod.POST)
+	public String delete(HttpServletRequest req, HttpServletResponse res)
+			throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper objectmapper = new ObjectMapper();
-		System.out.println("in delete method");
+		System.out.println("in signout method");
 		Map<String, String> map = new HashMap<>();
-		HttpSession session = req.getSession();
+		map.put("key", "success");
+		return objectmapper.writeValueAsString(map);
+
+	}
+
+	@RequestMapping("/Aftersigout")
+	public ModelAndView signout(HttpServletRequest req, HttpServletResponse res) {
+		HttpSession session = req.getSession(false);
 		Personpojo obj = (Personpojo) session.getAttribute("id");
 		String email = obj.getEmail();
 		System.out.println(email);
 		session.invalidate();
-		map.put("key", "success");
-		return objectmapper.writeValueAsString(map);
-		
-		
+		/*
+		 * res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"
+		 * ); // HTTP 1.1. res.setHeader("Pragma", "no-cache"); // HTTP 1.0.
+		 * res.setDateHeader("Expires", 0);
+		 */ return new ModelAndView("firstpage");
+
 	}
-	@RequestMapping("/Aftersigout")
-   public ModelAndView signout() {
-	return new ModelAndView("firstpage");
-	   
-	   
-	   
-   }
 }
