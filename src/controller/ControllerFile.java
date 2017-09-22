@@ -130,7 +130,10 @@ public class ControllerFile {
 		Map<String, Object> map1 = objectmapper.readValue(timedata, new TypeReference<Map<String, Object>>() {
 		});
 		String time = (String) map1.get("time");
+		System.out.println(time);
+	//	String pausetime = (String) map1.get("pausetime");
 		String[] arr=time.split(":");
+		//String[] pausearray = pausetime.split(":");
 		String HH = arr[0];
 		String MM = arr[1];
 		String SS= arr[2];
@@ -142,7 +145,6 @@ public class ControllerFile {
 		long minutesec = minutes*60;
 		long totalsec = hourssec+minutesec+sec;
 		Long millisec = totalsec*1000;
-		System.out.println(millisec);
 		HttpSession session = req.getSession();
 		Personpojo registerobj = (Personpojo) session.getAttribute("id");
 		Long ids = registerobj.getIds();

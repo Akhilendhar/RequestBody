@@ -28,6 +28,8 @@ var name = "<%=x%>";
 
 console.log(name);
 document.getElementById("name").innerHTML = name;
+
+
 </script>
 </div>
 
@@ -41,7 +43,7 @@ document.getElementById("name").innerHTML = name;
 		<ul id="givenTime" class="list-group"
 			style="width:355px;
     text-align: center; padding-left: 6px; font-size: 22px; border-left: 48;"
-			onclick="startTimer(event)">
+			onclick="startTimer(event)" ondrop="drop(event)" ondragover="allowDrop(event)">
 		</ul>
 		</div>
 
@@ -55,13 +57,13 @@ document.getElementById("name").innerHTML = name;
 		</div>
 		 <p id ="timerror" style ="display:none">Enter the correct format</p>
 		 <div id="errorDisplay">
-	<p id="delete" style ="display:none">Delted Successfully</p>
+	<p id="delete" style ="display:none">Deleted Successfully</p>
 	</div>
 		 
 		<div onclick="openBox()" id="plus">
 
 			<div id="hor">
-			<h3 style="background-color:black; padding:2% 460px 0% 0; ">
+			<h3 style="background-color:black; padding:2% 453px 0% 0; ">
 			</div>
 			<center>
 				<h1>
@@ -88,6 +90,7 @@ document.getElementById("name").innerHTML = name;
 		<div id="stop" style="display: none;" onclick="stop()">
 			<span class="glyphicon glyphicon-stop" style="color: red;font-size =10px;font-size: 25px;margin-right: -2px;margin-left: 767px;">stop</span>
 		</div>
+		<button id="pauseButton" class="glyphicon glyphicon-pause"  onclick="pauseFunc()" style="display:none;color: blue;font-size :10px;font-size: 25px;margin-right: -2px;margin-left: 767px;">pause</button>
 	</div>
 	<div id="result1"></div>
 	<div id="Time"> </div>
@@ -110,6 +113,7 @@ document.getElementById("name").innerHTML = name;
 							lii.setAttribute("style","margin-right: -50px; float: right;margin-top: -73px;");
 							li.setAttribute("class", "list-group-item");
 							li.setAttribute("class", "well");
+							/* li.setAttribute("draggable","true"); */
 							li.appendChild(document.createTextNode(time));
 							ul.appendChild(li);
 							ul.appendChild(lii);
@@ -140,5 +144,41 @@ if (null == userName) {
   rd.forward(request, response);
 }
  %>
+<script>
+
+var time = localStorage.getItem("pausetime");
+if(time!=null){
+document.getElementById("pauseButton").style.display = "block";
+document.getElementById("display").innerHTML = time;
+date = new Date();
+var initialtime = time;
+var array = null;
+	array = initialtime.split(':');
+	console.log(array);
+	var hours = array[0];
+	var minutes = array[1];
+	var seconds = array[2];
+	date.setHours(hours);
+	date.setMinutes(minutes);
+	date.setSeconds(seconds);
+	clearInterval(timer);
+	timer = setInterval(function() {
+		var hrs = date.getHours();
+		var min = date.getMinutes();
+		var sec = date.getSeconds();
+		hrs = hrs<10?"0"+hrs:hrs;
+		min = min<10?"0"+min:min;
+		sec = sec<10?"0"+sec:sec;
+		document.getElementById("display").innerHTML = hrs+
+				 ":" +min+ ":" + sec;
+		date.setTime(date.getTime() + 1000);
+	}, 1000);
+}
+else{
+	localStorage.removeItem("pausetime");
+	document.getElementById("display").innerHTML = "00:00:00";
+	
+}
+</script>
 
 </html>

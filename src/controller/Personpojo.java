@@ -19,9 +19,13 @@ public Long getIds() {
 	public void setIds(Long ids) {
 		this.ids = ids;
 	}
+	@Persistent
 private String firstname;
+	@Persistent
 private String lastname;
+	@Persistent
 private String email;
+	@Persistent
 private String password;
 public String getFirstname() {
 	return firstname;

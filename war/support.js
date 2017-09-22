@@ -1,11 +1,15 @@
 var date = null;
 var time = null;
-var timer = null;
+var timer = 0;
+pause=0;
+stop = 0;
 function openBox() {
+
 	document.getElementById("addingTime").style.display = "block";
 	
 }
 function timecheck(){
+
 	var e = event || window.event;
 	if (e.keyCode == 13) {
 		time = document.getElementById("giveTime").value;
@@ -44,6 +48,7 @@ function postTime() {
 	        	lii.setAttribute("style","margin-right: -50px; float: right;margin-top: -73px;");
 	        	li.setAttribute("class", "list-group-item");
 	        	li.setAttribute("class", "well");
+	        	/*li.setAttribute("draggable","true");*/
 	        	li.appendChild(document.createTextNode(time));
 	        	ul.appendChild(li);
 	        	ul.appendChild(lii);
@@ -71,6 +76,7 @@ function postTime() {
 }
 function stop() {
 	clearInterval(timer);
+	document.getElementById("display").innerHTML="00:00:00";
 }
 
 
@@ -88,6 +94,7 @@ function checkTimeFormat(event) {
 	}
 }
 function startTimer(event) {
+	localStorage.removeItem("pausetime");
 	var target = getEventTarget(event);
 	var targetId = event.target.id;
 	if (!targetId) {
@@ -120,6 +127,7 @@ function startTimer(event) {
 			date.setTime(date.getTime() + 1000);
 		}, 1000);
 		document.getElementById("stop").style.display = "block";
+		document.getElementById("pauseButton").style.display = "block";
 	} else {
 		var deltime = targetId;
 		console.log(deltime);
@@ -185,6 +193,7 @@ xhr.onreadystatechange = function () {
         	//debugger;
        // alert("success");
         //alert(json.name);
+        localStorage.removeItem("pausetime");
         console.log(json.name);
         window.location.href="/aftersignup";
         //alert("launch other pager");
@@ -265,4 +274,61 @@ function hidetexbox(){
 		//console.log(name);
 		xhr.send("");
 	}
-	
+	function pauseFunc(){
+		if(stop==0){
+	    if (pause==0) 
+	    {
+		  document.getElementById("pauseButton").innerHTML="Resume";
+		  pauseTime=document.getElementById("display").innerHTML;
+		  localStorage.setItem("pausetime", pauseTime);
+		  console.log(pauseTime);
+		  clearInterval(timer);
+	      pause=1;
+	      return;
+	    }
+
+		if (pause==1) 
+	    {
+	      document.getElementById("pauseButton").innerHTML="Pause";
+	     // alert("dfdf");
+	      pause=0;
+	      var pausetime = document.getElementById("display").innerHTML;
+	      console.log(pausetime);
+	      date = new Date();
+		  var initialtime = pausetime;
+		  var array = null;
+			array = initialtime.split(':');
+			console.log(array);
+			var hours = array[0];
+			var minutes = array[1];
+			var seconds = array[2];
+			date.setHours(hours);
+			date.setMinutes(minutes);
+			date.setSeconds(seconds);
+			clearInterval(timer);
+			timer = setInterval(function() {
+				var hrs = date.getHours();
+				var min = date.getMinutes();
+				var sec = date.getSeconds();
+				hrs = hrs<10?"0"+hrs:hrs;
+				min = min<10?"0"+min:min;
+				sec = sec<10?"0"+sec:sec;
+				document.getElementById("display").innerHTML = hrs+
+						 ":" +min+ ":" + sec;
+				date.setTime(date.getTime() + 1000);
+			}, 1000);
+		
+	       
+	      return;
+	    }
+	    return;
+		}
+							
+	}
+	function allowDrop(ev) {
+	    ev.preventDefault();
+	}
+
+	function drag(ev) {
+	    ev.dataTransfer.setData("text", ev.target.id);
+	}

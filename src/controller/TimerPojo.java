@@ -7,12 +7,14 @@ import java.util.Set;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 
+@SuppressWarnings("serial")
 @PersistenceCapable
 public class TimerPojo implements Serializable {
-	
+	@Persistent
 	private Long time;
 	@Persistent
 	private String email;
+	@Persistent
 	private Boolean isDelete=false;
 	
 	public Boolean getIsDelete() {
